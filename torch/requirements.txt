@@ -1,0 +1,11 @@
+torch>=2.4
+transformers>=4.41
+datasets>=2.19
+huggingface_hub>=0.23
+sacrebleu>=2.4
+rouge_score>=0.1.2
+pyyaml>=6.0
+tqdm>=4.66
+numpy>=1.26
+einops>=0.7
+wandb>=0.17
