@@ -1,0 +1,712 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ELF PyTorch 工作说明</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f8f4;
+      --ink: #182018;
+      --muted: #5b645a;
+      --line: #d8ded2;
+      --paper: #ffffff;
+      --soft: #eef3ea;
+      --teal: #136f63;
+      --teal-soft: #d9eee9;
+      --plum: #6c3f80;
+      --plum-soft: #eadff0;
+      --gold: #a36b0b;
+      --gold-soft: #f5ead1;
+      --red: #a0443f;
+      --red-soft: #f4dedd;
+      --code: #101510;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+      letter-spacing: 0;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    a {
+      color: var(--teal);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+    }
+
+    .shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      min-height: 86vh;
+      display: grid;
+      align-items: end;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(247, 248, 244, 0.04), rgba(247, 248, 244, 0.92)),
+        url("../assets/teaser.gif") center / cover no-repeat;
+    }
+
+    .hero {
+      padding: 96px 0 56px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      margin: 0 0 18px;
+      color: var(--teal);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+
+    h1 {
+      max-width: 820px;
+      margin: 0;
+      font-size: clamp(42px, 7vw, 86px);
+      line-height: 0.96;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 740px;
+      margin: 22px 0 0;
+      color: #293529;
+      font-size: clamp(18px, 2vw, 23px);
+      font-weight: 520;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      border-bottom: 1px solid var(--line);
+      background: rgba(247, 248, 244, 0.94);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-row {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 58px;
+      overflow-x: auto;
+    }
+
+    .brand {
+      flex: 0 0 auto;
+      font-weight: 800;
+    }
+
+    .links {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      white-space: nowrap;
+      font-size: 14px;
+    }
+
+    section {
+      padding: 72px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(300px, 0.58fr);
+      gap: 44px;
+      align-items: end;
+      margin-bottom: 34px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(30px, 4vw, 48px);
+      line-height: 1.04;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 10px;
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    .section-copy {
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+      padding: 20px;
+    }
+
+    .panel p,
+    .panel li {
+      color: var(--muted);
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      margin-bottom: 14px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--ink);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .tag.teal { background: var(--teal-soft); color: var(--teal); }
+    .tag.plum { background: var(--plum-soft); color: var(--plum); }
+    .tag.gold { background: var(--gold-soft); color: var(--gold); }
+    .tag.red { background: var(--red-soft); color: var(--red); }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      align-items: stretch;
+    }
+
+    .flow-step {
+      min-height: 146px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--paper);
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .flow-step::after {
+      content: "";
+      position: absolute;
+      right: -18px;
+      top: 50%;
+      width: 36px;
+      height: 2px;
+      background: var(--line);
+    }
+
+    .flow-step:last-child::after {
+      display: none;
+    }
+
+    .num {
+      width: 30px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .formula {
+      margin-top: 12px;
+      padding: 13px 14px;
+      border-radius: 8px;
+      background: #101510;
+      color: #f4f7f0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 14px;
+      overflow-x: auto;
+    }
+
+    .media-band {
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(320px, 0.6fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .media {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--paper);
+    }
+
+    .media-caption {
+      padding: 14px 16px;
+      color: var(--muted);
+      font-size: 14px;
+      border-top: 1px solid var(--line);
+    }
+
+    .matrix {
+      display: grid;
+      grid-template-columns: 1.05fr repeat(4, minmax(0, 1fr));
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--paper);
+    }
+
+    .cell {
+      padding: 14px 13px;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      min-height: 58px;
+      color: var(--muted);
+    }
+
+    .cell:nth-child(5n) {
+      border-right: 0;
+    }
+
+    .cell.head {
+      background: var(--soft);
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    .cell strong {
+      color: var(--ink);
+    }
+
+    code,
+    pre {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    pre {
+      margin: 0;
+      padding: 18px;
+      border-radius: 8px;
+      overflow-x: auto;
+      background: var(--code);
+      color: #f4f7f0;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    li + li {
+      margin-top: 8px;
+    }
+
+    .file-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .file {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .file:last-child {
+      border-bottom: 0;
+    }
+
+    .path {
+      color: var(--ink);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .note {
+      border-left: 4px solid var(--teal);
+      padding: 18px 20px;
+      background: var(--teal-soft);
+      border-radius: 0 8px 8px 0;
+      color: #143b36;
+    }
+
+    footer {
+      padding: 42px 0 56px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 900px) {
+      header {
+        min-height: 76vh;
+      }
+
+      .section-head,
+      .media-band,
+      .grid.two,
+      .grid.three {
+        grid-template-columns: 1fr;
+      }
+
+      .flow {
+        grid-template-columns: 1fr;
+      }
+
+      .flow-step::after {
+        right: auto;
+        left: 30px;
+        top: auto;
+        bottom: -8px;
+        width: 2px;
+        height: 16px;
+      }
+
+      .matrix {
+        grid-template-columns: 1fr;
+      }
+
+      .cell,
+      .cell:nth-child(5n) {
+        border-right: 0;
+      }
+
+      .path {
+        white-space: normal;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="shell hero">
+      <p class="eyebrow"><span class="dot"></span> Embedded Language Flows</p>
+      <h1>ELF：把语言生成放进连续嵌入空间里的 Flow Matching</h1>
+      <p class="lead">
+        这个页面解释 `codex/` 里的 PyTorch 版本做了什么：冻结 T5 encoder 得到连续 token 表示，
+        用一个共享权重的 Transformer 同时学习去噪和最终离散化，并面向 8xH200 做 DDP 训练。
+      </p>
+    </div>
+  </header>
+
+  <nav>
+    <div class="shell nav-row">
+      <div class="brand">ELF PyTorch</div>
+      <div class="links">
+        <a href="#idea">核心想法</a>
+        <a href="#training">训练目标</a>
+        <a href="#implementation">实现结构</a>
+        <a href="#h200">8xH200</a>
+        <a href="#run">运行入口</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section id="idea">
+      <div class="shell">
+        <div class="section-head">
+          <h2>核心想法：大部分时间保持连续，最后一步才回到 token</h2>
+          <p class="section-copy">
+            传统语言模型直接预测离散 token。ELF 先把 token 序列编码成连续嵌入 `x`，
+            从高斯噪声 `z0` 逐步流向干净嵌入 `x`，只在 `t=1` 时使用 unembedding 得到词表 logits。
+          </p>
+        </div>
+
+        <div class="flow" aria-label="ELF pipeline">
+          <div class="flow-step">
+            <div class="num">1</div>
+            <h3>Tokenize</h3>
+            <p>输入文本变成 token id，条件任务会把 source prefix 接到 target 前面。</p>
+          </div>
+          <div class="flow-step">
+            <div class="num">2</div>
+            <h3>Encode</h3>
+            <p>冻结 T5 encoder 输出上下文化嵌入，并按 latent mean/std 归一化。</p>
+          </div>
+          <div class="flow-step">
+            <div class="num">3</div>
+            <h3>Flow</h3>
+            <p>用线性插值构造 `zt = t*x + (1-t)*eps`，学习从噪声到数据的速度场。</p>
+          </div>
+          <div class="flow-step">
+            <div class="num">4</div>
+            <h3>Denoise</h3>
+            <p>ELF Transformer 预测干净嵌入 `x_pred`，再换算成 velocity 做 MSE。</p>
+          </div>
+          <div class="flow-step">
+            <div class="num">5</div>
+            <h3>Decode</h3>
+            <p>`t=1` 分支共享同一网络，接 unembedding 后用 CE 学会回到离散 token。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell media-band">
+        <div class="media">
+          <img src="../assets/generation.gif" alt="ELF denoising trajectory">
+          <div class="media-caption">采样时，ELF 从高斯噪声开始，逐步把连续嵌入修正成可解码的语言表示。</div>
+        </div>
+        <div class="panel">
+          <span class="tag teal">Why Continuous</span>
+          <h3>为什么这样有效</h3>
+          <ul>
+            <li>连续空间天然适合 Flow Matching、ODE/SDE sampler 和 CFG。</li>
+            <li>上下文化 T5 嵌入让每个位置已经带有句子级语义。</li>
+            <li>最终离散化只发生一次，避免每个去噪步都被词表分类目标绑住。</li>
+            <li>共享 denoiser/decoder 权重，不需要额外训练一个独立 decoder。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="training">
+      <div class="shell">
+        <div class="section-head">
+          <h2>训练由两个分支交替组成</h2>
+          <p class="section-copy">
+            源码和论文默认 80% denoiser 分支、20% decoder 分支。PyTorch 版保持这个 step-level branch sampling，
+            每个 micro-step 随机选择一个目标来训练同一个 ELF 网络。
+          </p>
+        </div>
+
+        <div class="grid two">
+          <div class="panel">
+            <span class="tag plum">Denoiser branch</span>
+            <h3>学习连续流</h3>
+            <p>
+              采样时间 `t`，把干净嵌入 `x` 和高斯噪声 `eps` 插值得到 `zt`。
+              网络输出 `x_pred`，再换算成 velocity 和目标速度比较。
+            </p>
+            <div class="formula">zt = t*x + (1-t)*eps<br>v_pred = (x_pred - zt) / max(1-t, eps_t)<br>loss = mean((v_pred - v_target)^2)</div>
+          </div>
+
+          <div class="panel">
+            <span class="tag gold">Decoder branch</span>
+            <h3>学习最终离散化</h3>
+            <p>
+              在 `t=1` 时输入已经接近干净嵌入，所以训练时额外按 token 级别加噪。
+              同一个 ELF 网络进入 decode mode，输出经 unembedding 做 cross entropy。
+            </p>
+            <div class="formula">z_decode = p*x + (1-p)*eps<br>h = ELF(z_decode, t=1, mode=decode)<br>loss = CE(unembed(h), tokens)</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="shell">
+        <div class="section-head">
+          <h2>条件、CFG 和自条件都通过上下文 token 注入</h2>
+          <p class="section-copy">
+            ELF 不用 adaLN-Zero 汇总所有控制信号，而是把时间、self-conditioning CFG scale、mode token
+            作为 prefix token 拼到序列前面，让 Transformer 通过自注意力读取这些控制信号。
+          </p>
+        </div>
+
+        <div class="matrix">
+          <div class="cell head">信号</div>
+          <div class="cell head">位置</div>
+          <div class="cell head">数量</div>
+          <div class="cell head">作用</div>
+          <div class="cell head">PyTorch 文件</div>
+
+          <div class="cell"><strong>time tokens</strong></div>
+          <div class="cell">序列最前</div>
+          <div class="cell">默认 4</div>
+          <div class="cell">告诉网络当前流时间 `t`。</div>
+          <div class="cell">`model.py`</div>
+
+          <div class="cell"><strong>SC CFG tokens</strong></div>
+          <div class="cell">time 后面</div>
+          <div class="cell">默认 4</div>
+          <div class="cell">单次前向建模 guided velocity，降低推理时 CFG 双前向成本。</div>
+          <div class="cell">`training.py`</div>
+
+          <div class="cell"><strong>mode tokens</strong></div>
+          <div class="cell">文本 token 前</div>
+          <div class="cell">默认 4</div>
+          <div class="cell">区分 denoise 和 decode，两种目标共享主干权重。</div>
+          <div class="cell">`model.py`</div>
+
+          <div class="cell"><strong>condition prefix</strong></div>
+          <div class="cell">控制 token 后</div>
+          <div class="cell">任务决定</div>
+          <div class="cell">翻译/摘要中保留 source 的干净嵌入，不参与目标 token loss。</div>
+          <div class="cell">`data.py`</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="implementation">
+      <div class="shell">
+        <div class="section-head">
+          <h2>`codex/` 里的实现结构</h2>
+          <p class="section-copy">
+            这版是独立 PyTorch 栈：使用 Hugging Face `T5EncoderModel` 作为冻结 encoder，
+            用 DDP/NCCL 在 H200 上训练 ELF 主体。
+          </p>
+        </div>
+
+        <div class="grid two">
+          <div class="panel file-list">
+            <div class="file">
+              <span class="path">elf_pytorch/model.py</span>
+              <span>ELF Transformer、RoPE、RMSNorm、SwiGLU、decoder head。</span>
+            </div>
+            <div class="file">
+              <span class="path">elf_pytorch/training.py</span>
+              <span>denoiser/decoder loss、自条件、training-time CFG。</span>
+            </div>
+            <div class="file">
+              <span class="path">elf_pytorch/train.py</span>
+              <span>DDP 训练循环、bf16、EMA、checkpoint、日志。</span>
+            </div>
+            <div class="file">
+              <span class="path">elf_pytorch/optim.py</span>
+              <span>Muon 和 AdamW 参数分组。</span>
+            </div>
+          </div>
+
+          <div class="panel file-list">
+            <div class="file">
+              <span class="path">elf_pytorch/data.py</span>
+              <span>HF dataset、collate、条件 prefix attention mask。</span>
+            </div>
+            <div class="file">
+              <span class="path">elf_pytorch/sampling.py</span>
+              <span>ODE/SDE 风格采样工具。</span>
+            </div>
+            <div class="file">
+              <span class="path">configs/*.yaml</span>
+              <span>ELF-B/M/L 的 8xH200 配置。</span>
+            </div>
+            <div class="file">
+              <span class="path">train.py</span>
+              <span>仓库根目录安全入口，避开顶层 `torch/` 目录冲突。</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="h200">
+      <div class="shell">
+        <div class="section-head">
+          <h2>8xH200 训练配置的关键点</h2>
+          <p class="section-copy">
+            H200 显存很宽裕，但 1024 长度、全注意力、T5 encoder 和 ELF-L 仍然需要合理的 micro-batch 与梯度累积。
+            当前配置保持 effective global batch 为 512，以对齐论文和原始配置。
+          </p>
+        </div>
+
+        <div class="grid three">
+          <div class="panel">
+            <span class="tag teal">ELF-B</span>
+            <h3>105M</h3>
+            <p>每卡 micro-batch 16，累积 4 步，适合先做完整链路验证。</p>
+          </div>
+          <div class="panel">
+            <span class="tag plum">ELF-M</span>
+            <h3>342M</h3>
+            <p>每卡 micro-batch 8，累积 8 步，吞吐和显存更稳。</p>
+          </div>
+          <div class="panel">
+            <span class="tag red">ELF-L</span>
+            <h3>652M</h3>
+            <p>每卡 micro-batch 4，累积 16 步，建议先跑短步数 smoke train。</p>
+          </div>
+        </div>
+
+        <div class="media" style="margin-top: 18px;">
+          <img src="../assets/sys_compare.jpg" alt="ELF system comparison">
+          <div class="media-caption">论文中的系统级比较显示 ELF 在较少采样步数下有较强生成质量；本 PyTorch 版目标是复现训练路径，而不是引入额外架构改动。</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="run">
+      <div class="shell">
+        <div class="section-head">
+          <h2>最短运行路径</h2>
+          <p class="section-copy">
+            训练入口在 `codex/train.py`。从仓库根目录启动时，Python 会优先使用真实 PyTorch 包，
+            不会把仓库的顶层 `torch/` 文件夹误当成依赖。
+          </p>
+        </div>
+
+        <div class="grid two">
+          <pre><code>pip install -r codex/requirements-pytorch.txt
+
+cd codex
+PYTHONPATH=. pytest tests/test_smoke.py
+cd ..
+
+torchrun --standalone --nproc_per_node=8 \
+  codex/train.py \
+  --config codex/configs/train_owt_elf_b_8xh200.yaml</code></pre>
+
+          <div class="note">
+            <strong>建议顺序：</strong>先在 CPU 或单卡上跑 smoke test，再在 8xH200 上用 ELF-B 配置跑几十个 step；
+            确认 loss、显存和 checkpoint 都正常后，再切到 ELF-M 或 ELF-L。
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell">
+      文件位置：`codex/elf_explainer.html`。配套运行指南见 `codex/GUIDELINE.md`。
+    </div>
+  </footer>
+</body>
+</html>

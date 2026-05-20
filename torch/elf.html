@@ -1511,6 +1511,74 @@ footer .footer-deco {
 .fig-tut .mask-cell-on { fill: var(--teal); }
 .fig-tut .mask-cell-off { fill: var(--cream-deep); stroke: var(--hairline); }
 
+/* ============================================================
+   Figure 1.1 · GIF 矢量动画复刻
+   ============================================================ */
+.fig-gif { width: 100%; height: auto; }
+.fig-gif .panel-bg { fill: var(--paper); stroke: var(--hairline); stroke-width: 1; }
+.fig-gif .panel-sep { stroke: var(--hairline); stroke-width: 1; }
+.fig-gif .panel-cat {
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: 14px;
+  font-weight: 700;
+  font-style: italic;
+  fill: var(--ink);
+}
+.fig-gif .panel-cat-pre {
+  font-family: 'Newsreader', Georgia, serif;
+  font-size: 14px;
+  font-weight: 700;
+  fill: var(--rose);
+}
+.fig-gif .progress-track { fill: var(--cream-deep); stroke: var(--hairline); stroke-width: 0.6; }
+.fig-gif .progress-fill { fill: var(--teal); }
+.fig-gif .progress-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  fill: var(--ink-soft);
+}
+.fig-gif .t-text {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  fill: var(--teal-ink);
+}
+.fig-gif .content {
+  font-family: 'JetBrains Mono', 'SF Mono', Menlo, monospace;
+  font-size: 10.5px;
+  fill: var(--ink-soft);
+  letter-spacing: 0.01em;
+}
+.fig-gif .content-noise { fill: #8e85d0; opacity: 0.85; }
+.fig-gif .content-mid { fill: #6b66b8; }
+.fig-gif .content-near { fill: var(--ink); }
+.fig-gif .content-final { fill: var(--ink); font-weight: 500; }
+
+/* 5 阶段 cross-fade (周期 12 秒) */
+.fig-gif .stage { opacity: 0; }
+@keyframes gif-stage-0 { 0%, 12% { opacity: 1; } 17%, 100% { opacity: 0; } }
+@keyframes gif-stage-1 { 0%, 12% { opacity: 0; } 17%, 30% { opacity: 1; } 35%, 100% { opacity: 0; } }
+@keyframes gif-stage-2 { 0%, 30% { opacity: 0; } 35%, 50% { opacity: 1; } 55%, 100% { opacity: 0; } }
+@keyframes gif-stage-3 { 0%, 50% { opacity: 0; } 55%, 70% { opacity: 1; } 75%, 100% { opacity: 0; } }
+@keyframes gif-stage-4 { 0%, 70% { opacity: 0; } 75%, 100% { opacity: 1; } }
+.fig-gif .stage-0 { animation: gif-stage-0 12s linear infinite; }
+.fig-gif .stage-1 { animation: gif-stage-1 12s linear infinite; }
+.fig-gif .stage-2 { animation: gif-stage-2 12s linear infinite; }
+.fig-gif .stage-3 { animation: gif-stage-3 12s linear infinite; }
+.fig-gif .stage-4 { animation: gif-stage-4 12s linear infinite; }
+
+/* 进度条 fill 从 0% 到 100% (12 秒, 最后 25% 停在满) */
+@keyframes gif-progress {
+  0%   { transform: scaleX(0); }
+  75%  { transform: scaleX(1); }
+  100% { transform: scaleX(1); }
+}
+.fig-gif .progress-fill {
+  transform-origin: left center;
+  animation: gif-progress 12s linear infinite;
+}
+
 /* 速查卡 · reference card · glossary + equations */
 .glossary {
   display: grid;
@@ -1765,6 +1833,223 @@ footer .footer-deco {
       </svg>
     </div>
     <div class="figure-caption">ELF 将去噪轨迹保留在连续嵌入空间，仅在 t = 1 时通过共享权重的解码头映射为离散 token。青色尾迹象征速度场 v = x − ε。</div>
+  </figure>
+
+  <figure class="figure">
+    <div class="figure-header">
+      <span class="figure-label">Figure 1.1 · 采样轨迹（论文 Fig. 2 矢量动画复刻）</span>
+      <span class="figure-tag">3 panels · 12s loop · 5 stages</span>
+    </div>
+    <div class="figure-body">
+      <svg class="fig-gif" viewBox="0 0 920 540" preserveAspectRatio="xMidYMid meet">
+        <!-- ============ Panel 1: movies ============ -->
+        <g transform="translate(20, 20)">
+          <rect class="panel-bg" width="880" height="160" rx="6"/>
+
+          <!-- header -->
+          <text class="panel-cat-pre" x="16" y="26">#1</text>
+          <text class="panel-cat" x="44" y="26">— movies</text>
+          <line class="panel-sep" x1="16" y1="38" x2="864" y2="38"/>
+
+          <!-- progress + t value (5 stages cross-fade) -->
+          <g class="stage stage-0">
+            <text class="progress-text" x="700" y="26" text-anchor="end">0 %</text>
+            <text class="t-text" x="864" y="26" text-anchor="end">t = 0.00</text>
+          </g>
+          <g class="stage stage-1">
+            <text class="progress-text" x="700" y="26" text-anchor="end">25 %</text>
+            <text class="t-text" x="864" y="26" text-anchor="end">t = 0.25</text>
+          </g>
+          <g class="stage stage-2">
+            <text class="progress-text" x="700" y="26" text-anchor="end">50 %</text>
+            <text class="t-text" x="864" y="26" text-anchor="end">t = 0.50</text>
+          </g>
+          <g class="stage stage-3">
+            <text class="progress-text" x="700" y="26" text-anchor="end">75 %</text>
+            <text class="t-text" x="864" y="26" text-anchor="end">t = 0.75</text>
+          </g>
+          <g class="stage stage-4">
+            <text class="progress-text" x="700" y="26" text-anchor="end">100 %</text>
+            <text class="t-text" x="864" y="26" text-anchor="end">t = 1.00</text>
+          </g>
+
+          <!-- text content: 5 stages -->
+          <text class="content content-noise stage stage-0">
+            <tspan x="16" y="64">building building building strength bardband bardbandbardband building bardband bardbandbardband</tspan>
+            <tspan x="16" y="84">bardbandbardband william bardband bardbandbardband building bardbandbardband bardbandbardband building</tspan>
+            <tspan x="16" y="104">bardbandbardband bardband bardbandbardband building bardbandbardband bardbandbardband building bardband</tspan>
+            <tspan x="16" y="124">bardband bardband bardband bardband bardband bardband bardband bardband bardband bardband bardband</tspan>
+            <tspan x="16" y="144">bardband bardband bardband bardband bardband bardband bardband bardband bardband bardband bardband</tspan>
+          </text>
+          <text class="content content-noise stage stage-1">
+            <tspan x="16" y="64">Community in the hallways on by Vice and car scenes frame home on Private fight on crib</tspan>
+            <tspan x="16" y="84">buildingr fight on with W on set... two of will do list buildingr fight fight fight on M and</tspan>
+            <tspan x="16" y="104">class promise this class fight fight host on the bonn rep car car car car cap... car cap car</tspan>
+            <tspan x="16" y="124">car car cap car cap car car cap car car cap car car cap car cap car car cap car car cap car</tspan>
+            <tspan x="16" y="144">cap car cap car car cap car car cap car cap car car cap car cap car car cap car cap car cap</tspan>
+          </text>
+          <text class="content content-mid stage stage-2">
+            <tspan x="16" y="64">today, the trailer is joined by Beck different four friends, running off engineering's new</tspan>
+            <tspan x="16" y="84">adventure on Earth and introducing engineering special sect for nextSpace craft. The four</tspan>
+            <tspan x="16" y="104">of them engage down engineering new adventure on Earth in their first year, as each of</tspan>
+            <tspan x="16" y="124">themthie formation see theDR in their back momenttown At one point, 11-year-old Kyle</tspan>
+            <tspan x="16" y="144">Bryanys starts off engineer's news…</tspan>
+          </text>
+          <text class="content content-near stage stage-3">
+            <tspan x="16" y="64">Tonight, the trailer is joined by four other new characters, starting off a new exploration</tspan>
+            <tspan x="16" y="84">of Earth and introducing engineering new future for two space ships. The four of them</tspan>
+            <tspan x="16" y="104">start off a new exploration of Earth in their first year, as each of them learn more about</tspan>
+            <tspan x="16" y="124">the worldon Mars and how they live in their first year. At one point, 11-year-old Kyle</tspan>
+            <tspan x="16" y="144">Bryanys starts off a new…</tspan>
+          </text>
+          <text class="content content-final stage stage-4">
+            <tspan x="16" y="64">Tonight's movie is joined by four other new characters, starting off a new exploration of</tspan>
+            <tspan x="16" y="84">Earth and introducing a new future for two space ships. The four of them start off a new</tspan>
+            <tspan x="16" y="104">exploration of Earth in their first year, as each of them learn more about the world on Mars</tspan>
+            <tspan x="16" y="124">and how they live in their first year. At one point, 11-year-old Kyle Bryany starts off a</tspan>
+            <tspan x="16" y="144">new…</tspan>
+          </text>
+        </g>
+
+        <!-- ============ Panel 2: tech ============ -->
+        <g transform="translate(20, 195)">
+          <rect class="panel-bg" width="880" height="160" rx="6"/>
+          <text class="panel-cat-pre" x="16" y="26">#2</text>
+          <text class="panel-cat" x="44" y="26">— tech</text>
+          <line class="panel-sep" x1="16" y1="38" x2="864" y2="38"/>
+
+          <g class="stage stage-0">
+            <text class="progress-text" x="700" y="26" text-anchor="end">0 %</text>
+            <text class="t-text" x="864" y="26" text-anchor="end">t = 0.00</text>
+          </g>
+          <g class="stage stage-1">
+            <text class="progress-text" x="700" y="26" text-anchor="end">25 %</text>
+            <text class="t-text" x="864" y="26" text-anchor="end">t = 0.25</text>
+          </g>
+          <g class="stage stage-2">
+            <text class="progress-text" x="700" y="26" text-anchor="end">50 %</text>
+            <text class="t-text" x="864" y="26" text-anchor="end">t = 0.50</text>
+          </g>
+          <g class="stage stage-3">
+            <text class="progress-text" x="700" y="26" text-anchor="end">75 %</text>
+            <text class="t-text" x="864" y="26" text-anchor="end">t = 0.75</text>
+          </g>
+          <g class="stage stage-4">
+            <text class="progress-text" x="700" y="26" text-anchor="end">100 %</text>
+            <text class="t-text" x="864" y="26" text-anchor="end">t = 1.00</text>
+          </g>
+
+          <text class="content content-noise stage stage-0">
+            <tspan x="16" y="64">tech back will bandbar piayer bandbardbardbardbard piayerbardbardbardbardbard bard bandbard</tspan>
+            <tspan x="16" y="84">bardbardbardbard piayer 1st bardbandbardbard bardbardbardbard piayer bard bandbard bardbard</tspan>
+            <tspan x="16" y="104">bardbardbard piayer bardbardbard bardbard bardbard piayer bardbardbard bardbardbardbard bard</tspan>
+            <tspan x="16" y="124">piayer bardbard bardbard piayer bardbardbard bardbard piayer bard bardbard piayer bardbardbard</tspan>
+            <tspan x="16" y="144">bard piayer bardbardbard bardbard piayer bard bardbard piayer bardbardbard bard piayer bardbard</tspan>
+          </text>
+          <text class="content content-noise stage stage-1">
+            <tspan x="16" y="64">Shoreline Bandpinpinpin made back in car played back in back assigned wait back for back bar</tspan>
+            <tspan x="16" y="84">assigned back in same distinct piayer make in same back framenom in the distinct frame frame</tspan>
+            <tspan x="16" y="104">with with frame fall lungior of frame in frame frame framepart bandbar bandbar bandbar bandbar</tspan>
+            <tspan x="16" y="124">tilltil bit fall framepart bandbar bandbar tilltil bit fall framepart bandbar bandbar tilltil</tspan>
+            <tspan x="16" y="144">bit fall framepart bandbar bandbar tilltil bit fall framepart bandbar bandbar tilltil bit fall</tspan>
+          </text>
+          <text class="content content-mid stage stage-2">
+            <tspan x="16" y="64">I borrowed the funeral 6oZ back wormless long time ago, and I was nonetheless intrigued and</tspan>
+            <tspan x="16" y="84">tested at how it looks pretty bigger and thinner. I look anticipating on engineering PC. It</tspan>
+            <tspan x="16" y="104">sports the nice back skin, frame where with engineering speaker slot inside, screen, has a</tspan>
+            <tspan x="16" y="124">dark bomb window with a keyboard tied inside, and it still looks a little bit heavy on a</tspan>
+            <tspan x="16" y="144">desk, but the fact is that it's still standing…</tspan>
+          </text>
+          <text class="content content-near stage stage-3">
+            <tspan x="16" y="64">I used the 6oZ myself a long time ago, and I was still thinking and surprised at how it looks</tspan>
+            <tspan x="16" y="84">much bigger and heavier than can be supported. PC. It sports the nice back skin, frame where</tspan>
+            <tspan x="16" y="104">with engineering speaker slot inside, screen, has a dark bomb window with a keyboard tied</tspan>
+            <tspan x="16" y="124">inside, and it still looks a little bit heavy on a desk, but the fact is that it's still</tspan>
+            <tspan x="16" y="144">standing. I had been asked a few times if I would use the 6oZ as a…</tspan>
+          </text>
+          <text class="content content-final stage stage-4">
+            <tspan x="16" y="64">I used the 6oZ myself a long time ago, and I was still thinking and surprised at how it looks</tspan>
+            <tspan x="16" y="84">much bigger and heavier than can be supported. The back skin is solid and the frame holds up,</tspan>
+            <tspan x="16" y="104">with a clean speaker slot and tight seams. The screen has a dark bomb window with a keyboard</tspan>
+            <tspan x="16" y="124">tied inside, and it still looks a little bit heavy on a desk, but the fact is that it's still</tspan>
+            <tspan x="16" y="144">standing. I had been asked a few times if I would use the 6oZ as a…</tspan>
+          </text>
+        </g>
+
+        <!-- ============ Panel 3: news ============ -->
+        <g transform="translate(20, 370)">
+          <rect class="panel-bg" width="880" height="160" rx="6"/>
+          <text class="panel-cat-pre" x="16" y="26">#3</text>
+          <text class="panel-cat" x="44" y="26">— news</text>
+          <line class="panel-sep" x1="16" y1="38" x2="864" y2="38"/>
+
+          <g class="stage stage-0">
+            <text class="progress-text" x="700" y="26" text-anchor="end">0 %</text>
+            <text class="t-text" x="864" y="26" text-anchor="end">t = 0.00</text>
+          </g>
+          <g class="stage stage-1">
+            <text class="progress-text" x="700" y="26" text-anchor="end">25 %</text>
+            <text class="t-text" x="864" y="26" text-anchor="end">t = 0.25</text>
+          </g>
+          <g class="stage stage-2">
+            <text class="progress-text" x="700" y="26" text-anchor="end">50 %</text>
+            <text class="t-text" x="864" y="26" text-anchor="end">t = 0.50</text>
+          </g>
+          <g class="stage stage-3">
+            <text class="progress-text" x="700" y="26" text-anchor="end">75 %</text>
+            <text class="t-text" x="864" y="26" text-anchor="end">t = 0.75</text>
+          </g>
+          <g class="stage stage-4">
+            <text class="progress-text" x="700" y="26" text-anchor="end">100 %</text>
+            <text class="t-text" x="864" y="26" text-anchor="end">t = 1.00</text>
+          </g>
+
+          <text class="content content-noise stage stage-0">
+            <tspan x="16" y="64">Band Band Band Band promised building spin Band Band promised building Band Band building Band</tspan>
+            <tspan x="16" y="84">Band Band Band promised building Band Band Band promised building band Band Band Band Band Band</tspan>
+            <tspan x="16" y="104">promised building Band Band promised building Band Band Band Band Band Band Band Band Band Band</tspan>
+            <tspan x="16" y="124">Band Band Band Band Band Band Band Band Band Band Band Band Band Band Band Band Band Band Band</tspan>
+            <tspan x="16" y="144">Band Band Band Band Band Band Band Band Band Band Band Band Band Band Band Band Band Band Band</tspan>
+          </text>
+          <text class="content content-noise stage stage-1">
+            <tspan x="16" y="64">Band Band Band promised building shin in band Band building building in private hand Band Band</tspan>
+            <tspan x="16" y="84">Band make Band Band building Band Band building building Band Band promised Band building Band</tspan>
+            <tspan x="16" y="104">building build of stake make make hand foot drop Band Band onward will Band Band Band Band Band</tspan>
+            <tspan x="16" y="124">Band Band Band Band onward will Band Band Band Band Band Band Band Band Band Band onward will</tspan>
+            <tspan x="16" y="144">Band Band Band Band Band Band Band Band Band Band Band Band Band Band Band Band Band Band Band</tspan>
+          </text>
+          <text class="content content-mid stage stage-2">
+            <tspan x="16" y="64">Yesterday, some 3.6 million people from Pittsburgh and Ohio joined targeted in engineering</tspan>
+            <tspan x="16" y="84">second shared push to build private state and rate round the foothold. The project, which will</tspan>
+            <tspan x="16" y="104">place at least 30,000 businesses across the area's two-thirds of communities in the area, is</tspan>
+            <tspan x="16" y="124">expected to result in 3.6 million jobs. Building the skyline is projected to stream build</tspan>
+            <tspan x="16" y="144">three million jobs by the end of 2020. We'll…</tspan>
+          </text>
+          <text class="content content-near stage stage-3">
+            <tspan x="16" y="64">Yesterday, some 3.6 million people from Canada and Australia took part in a heavily funded</tspan>
+            <tspan x="16" y="84">project to build a national skyline off the West Coast. The project, which will place at</tspan>
+            <tspan x="16" y="104">least 30,000 businesses across the area's two-thirds of communities in the area, is expected</tspan>
+            <tspan x="16" y="124">to result in 3.6 million jobs. Building the skyline is projected to stream build three</tspan>
+            <tspan x="16" y="144">million jobs by the end of 2020. We'll…</tspan>
+          </text>
+          <text class="content content-final stage stage-4">
+            <tspan x="16" y="64">Yesterday, some 3.6 million people from Canada and Australia took part in a heavily funded</tspan>
+            <tspan x="16" y="84">project to build a national skyline off the West Coast. The project, which will place at</tspan>
+            <tspan x="16" y="104">least 30,000 businesses across two-thirds of communities in the area, is expected to result</tspan>
+            <tspan x="16" y="124">in 3.6 million jobs. Building the skyline is projected to support three million jobs by the</tspan>
+            <tspan x="16" y="144">end of 2030. We'll…</tspan>
+          </text>
+        </g>
+
+        <!-- ============ 全局进度条（底部）============ -->
+        <g transform="translate(20, 510)">
+          <rect class="progress-track" width="880" height="6" rx="3"/>
+          <rect class="progress-fill" width="880" height="6" rx="3"/>
+        </g>
+
+      </svg>
+    </div>
+    <div class="figure-caption">论文 Fig. 2 矢量动画复刻：3 个 panel 同步演化，从 t=0 的重复噪声 token（"building building..."、"Band Band..."）到 t=1 的通顺段落。底部全局进度条与右上 t 值同步推进，12 秒一个完整轮回。</div>
   </figure>
 
   <h3>与其他方法的相对位置</h3>
@@ -3544,6 +3829,372 @@ for i in 0 .. N-1:
 
   <div class="callout warn">
     <strong>分支决策与 DDP 同步</strong>：每个 micro-batch 在 rank 0 上做一次伯努利采样，再用 <code>dist.broadcast</code> 同步到所有 rank。否则不同 rank 走不同分支，DDP 的梯度桶会因为参数集合不同而 hang 住。详见 <code>train.py::broadcast_branch</code>。
+  </div>
+
+  <!-- ============================================================
+       4.1 · 一次训练步的全过程
+       ============================================================ -->
+  <div class="tutorial-step">
+    <div class="tutorial-step-num">4.1 <span class="lead">WALKTHROUGH</span></div>
+    <h3>一次 micro-batch 训练步的全过程</h3>
+
+    <p>上面的管线图把"概念阶段"画清楚了，但代码里实际<strong>一次 micro-batch 训练步</strong>做了什么？这一节从外到内拆开看，每一行都告诉你"做什么 + 为什么"。</p>
+
+    <p>主入口是 <code>train_step.py::train_step</code>。它的签名告诉你它只负责 forward 那一块：</p>
+
+<pre><code>def train_step(model, encoder, batch, config,
+               autocast_dtype, is_decoder_step):
+    """One forward+backward. Returns (loss, metrics, is_decoder_step).
+    The caller is responsible for loss.backward(), optimizer.step(),
+    EMA, and optimizer.zero_grad()."""</code></pre>
+
+    <p>注意它<strong>不</strong>负责 backward、optimizer.step、EMA。这些都在外层 <code>train.py</code> 的循环里，因为只有外层才知道是不是 grad accumulation window 的最后一步。这种"职责分离"是有意为之 —— 让 train_step 保持纯粹的"前向 + loss 计算"，外层负责调度。</p>
+
+    <div class="takeaway">
+      <strong>分层原则</strong>：<code>train_step.py</code> 处理一个 micro-batch 的 forward 逻辑；<code>train.py</code> 处理多个 micro-batch 的累积、DDP 同步、optimizer 调度、EMA 更新。两者通过返回值（<code>loss</code>）和参数（<code>is_decoder_step</code>）解耦。
+    </div>
+  </div>
+
+  <!-- ============================================================
+       4.2 · 共享前置: 编码 + 噪声采样
+       ============================================================ -->
+  <div class="tutorial-step">
+    <div class="tutorial-step-num">4.2 <span class="lead">SHARED PREP</span></div>
+    <h3>共享前置：编码 + 噪声采样</h3>
+
+    <p>无论走哪条分支，前几步是完全相同的。先编码再采样所有可能用到的随机量。</p>
+
+    <h4>第 ① 步：T5 编码（冻结，no_grad）</h4>
+
+<pre><code>with torch.no_grad():
+    x0 = encoder(input_ids=batch["input_ids"],
+                 attention_mask=encoder_attn)
+    x0 = (x0 - config.latent_mean) / config.latent_std</code></pre>
+
+    <p><strong>为什么 no_grad？</strong> T5 是冻结的，反向不需要算梯度，省一大块显存。</p>
+
+    <p><strong>为什么除以 latent_std？</strong> T5 输出的方差不一定是 1。给嵌入做<strong>通道归一化</strong>（均值为 0、方差为 1）后，<code>z_t = t·x + (1-t)·ε</code> 这个插值的"两端"才有可比的尺度，否则 t→0 时 ε 占主导，t→1 时 x 占主导，模型容易学到"两端用不同 normalization"这种廉价 shortcut。论文给的 <code>latent_std=0.2</code> 是 OWT 上的实测值。</p>
+
+    <h4>第 ② 步：采样 t 和高斯噪声</h4>
+
+<pre><code>t = sample_timesteps(B, P_mean=-1.5, P_std=0.8,
+                     time_schedule="logit_normal",
+                     device=device)
+noise = torch.randn_like(x0)</code></pre>
+
+    <p><strong>为什么 logit-normal 而不是 uniform？</strong> 论文 Sec. C.6 (Fig. 15a) 验证过，logit-normal 时间表把更多概率质量放在 <strong>t 较小</strong>（接近噪声端）的位置。直觉：高噪声端是误差最容易积累的地方，多采样让网络对那里训练更充分；低噪声端（接近 x）的样本已经接近真值，每个样本的边际价值低。</p>
+
+    <p><strong>P_mean=-1.5 的含义</strong>：先采高斯 z ~ N(-1.5, 0.8²)，再映射 t = sigmoid(z)。z=-1.5 对应 t ≈ 0.18，所以采到的 t <strong>偏向 0.18 附近</strong>。绝大部分训练 batch 处在"中等到高噪声"区域。</p>
+
+    <h4>第 ③ 步：线性插值得到 z_t</h4>
+
+<pre><code>denoiser_z = add_noise(x0, noise, t, config,
+                       cond_seq_mask=cond_seq_mask3)
+# 等价于: z = t·x + (1-t)·ε·denoiser_noise_scale</code></pre>
+
+    <p>这就是 <strong>rectified flow</strong> 的插值。<code>denoiser_noise_scale=2.0</code> 让噪声端的方差比标准正态再大一倍，目的是让噪声分布与训练集的"两端"实际差距更大，迫使网络学到更明确的"去噪方向"。</p>
+
+    <h4>第 ④ 步：构造目标速度 v_target</h4>
+
+<pre><code>t_exp = t.view(-1, 1, 1)
+v_target = (x0 - denoiser_z) / torch.clamp(1.0 - t_exp, min=t_eps)</code></pre>
+
+    <p>真实速度 <strong>v = x - ε</strong>。但因为我们让网络<strong>预测 x</strong>（不是预测 v），所以代码里写的是从 (x, z, t) 反推 v 的形式：v = (x - z) / (1 - t)。<code>clamp</code> 是为了防止 t = 1 时除零。</p>
+
+    <p><strong>为什么 t_eps = 0.05 而不是更小的值？</strong> 太小的 t_eps 让 t 接近 1 时 (1-t) 很小，v_target 数值上很不稳。论文用 0.05 是平衡精度和数值稳定性。</p>
+
+    <h4>第 ⑤ 步：采样 CFG 强度和自条件掩码</h4>
+
+<pre><code>use_self_cond_mask = (torch.rand(B) < config.self_cond_prob).float().view(B, 1, 1)
+sc_cfg_scale = sample_cfg_scale(B, cfg_min=0.5, cfg_max=5.0)
+#                ↑ log-uniform on [1+0.5, 1+5], minus 1</code></pre>
+
+    <p><strong>self_cond_prob=0.5</strong>：50% 概率用真自条件，50% 概率用零（伪装无自条件）。这是为了让模型在推理时能从"无自条件"的第一步出发。</p>
+
+    <p><strong>为什么 CFG scale 是对数均匀采样？</strong> ω 的"距离"对应几何上的"外推强度"。线性采样会让 ω=1 和 ω=5 看起来等概率，但 log scale 上 ω=1 到 ω=2 的差距 = ω=2 到 ω=4 的差距。对数均匀让训练对所有强度尺度都有覆盖。</p>
+  </div>
+
+  <!-- ============================================================
+       4.3 · Denoise 分支详解
+       ============================================================ -->
+  <div class="tutorial-step">
+    <div class="tutorial-step-num">4.3 <span class="lead">DENOISER · 4 PASSES</span></div>
+    <h3>Denoise 分支详解 · 4 次前向</h3>
+
+    <p>denoise 分支是整个训练里最复杂的一段。它要做<strong>4 次模型 forward</strong>，但<strong>只有第 2 次产生梯度</strong>。逐次看：</p>
+
+    <h4>Pass ① 自条件初值（detached）</h4>
+
+<pre><code>with torch.no_grad():
+    z_in0 = torch.cat(
+        [denoiser_z, _restore_cond_2d_or_3d(torch.zeros_like(denoiser_z), x0, cond_seq_mask3)],
+        dim=-1,
+    )
+    net_out0 = model(z_in0, t, self_cond_cfg_scale=sc_cfg_scale,
+                     decoder_step_active=False)
+    _, x_pred_init = net_out_to_v_x(net_out0, denoiser_z, t, t_eps)</code></pre>
+
+    <p>这次喂网络的是 <code>[z_t, 0]</code>，即"没有自条件"。输出 x_pred_init 就是给第 2 次用的"伪上一步预测"。</p>
+
+    <p><strong>为什么用 no_grad？</strong> 这次的输出会被 detach 后塞进第 2 次的输入。如果带梯度，反向会试图穿过这次的整个 transformer，OOM 必然。</p>
+
+    <p><strong>为什么不复用一次第 2 次的输入？</strong> 在 §5 CFG 节会看到，第 1 次和第 3 次（CFG uncond）在确定性模式下数学等价。论文为了对齐 JAX 实现没复用，可以做 ~25% 优化（README 已注明）。</p>
+
+    <h4>Pass ② 训练前向（★ 唯一带梯度）</h4>
+
+<pre><code>x_pred_cond = x_pred_init * use_self_cond_mask.to(x_pred_init.dtype)
+z_in = torch.cat([denoiser_z, x_pred_cond], dim=-1)
+
+with torch.autocast(device_type=device.type, dtype=autocast_dtype, ...):
+    net_out = model(z_in, t, self_cond_cfg_scale=sc_cfg_scale,
+                    decoder_step_active=False)
+v_pred, _ = net_out_to_v_x(net_out, denoiser_z, t, t_eps)</code></pre>
+
+    <p>这次输入是 <code>[z_t, sg(x_pred_init) · mask]</code>。<code>mask</code> 是 50% bernoulli — 一半样本用第 1 次的 x_pred_init 作为自条件，另一半用零。</p>
+
+    <p><strong>为什么 autocast 包住这次的 model 调用？</strong> 用 bf16 做 forward 加速 + 省显存。但<strong>权重和梯度仍是 fp32</strong>（autocast 只在 forward 内部做类型转换，不影响参数）。这是 advisor 强调的 Muon DDP 正确性的前提。</p>
+
+    <h4>Pass ③ ④ CFG 装配（两次 detached）</h4>
+
+<pre><code>if config.num_self_cond_cfg_tokens > 0:
+    with torch.no_grad():
+        with torch.autocast(...):
+            # Pass ③: uncond, input = [z, 0]
+            z_in_uncond = torch.cat([denoiser_z,
+                _restore_cond_2d_or_3d(torch.zeros_like(denoiser_z), x0, cond_seq_mask3)], dim=-1)
+            net_out_uncond = model(z_in_uncond, t, ...)
+            v_uncond, x_uncond = net_out_to_v_x(net_out_uncond, denoiser_z, t, t_eps)
+
+            # Pass ④: cond, input = [z, sg(x_uncond)]
+            z_in_cond = torch.cat([denoiser_z, x_uncond], dim=-1)
+            net_out_cond = model(z_in_cond, t, ...)
+            v_cond, _ = net_out_to_v_x(net_out_cond, denoiser_z, t, t_eps)
+
+    sc_w = sc_cfg_scale.view(-1, 1, 1).to(v_cond.dtype)
+    sc_guidance = (1.0 - 1.0 / sc_w) * (v_cond - v_uncond)
+    sc_guidance = torch.where(use_self_cond_mask.bool(), sc_guidance, 0)
+    v_final_target = (v_target + sc_guidance).detach()</code></pre>
+
+    <p>这两次都是 <code>no_grad</code>。Pass ③ 给出"完全没自条件"的速度 <code>v_uncond</code>，Pass ④ 拿这个 v_uncond 对应的 x_uncond 作为 condition 算"有条件"速度 <code>v_cond</code>。</p>
+
+    <p><strong>为什么这样装配？</strong> §2.4 的 CFG 公式 v = v_uncond + ω·(v_cond - v_uncond)。代码这里直接把 <strong>CFG 后的 v</strong> 当作 v_target，让网络的 Pass ② 输出直接逼近"已经经过 CFG 外推"的速度。这就是论文叫"training-time CFG"的核心：把外推 baked into 训练目标，推理时单次 forward 就能直接得 CFG 速度场。</p>
+
+    <p><strong>为什么要 use_self_cond_mask 在 sc_guidance 上加一道 where？</strong> 当某个样本是"无自条件"的（mask=0），它的 Pass ② 输入也是零，对它做 CFG 外推没意义（cond 跟 uncond 一样）。把这部分 guidance 置零是正确的语义。</p>
+
+    <p><strong>为什么最后 detach()？</strong> v_final_target 是 ground truth，loss 的梯度只能从 v_pred 出发回传到模型参数，不能穿过 Pass ③ ④ 的 graph。detach 是必须的。</p>
+
+    <h4>第 ⑥ 步：安全归一化的 MSE</h4>
+
+<pre><code>per_dim_loss = (v_pred - v_final_target).float().pow(2)
+per_token_loss = per_dim_loss.mean(dim=-1)
+l2_loss = _mask_reduce_loss(per_token_loss, loss_mask)
+
+def _mask_reduce_loss(per_token_loss, loss_mask):
+    safe = torch.where(loss_mask > 0, per_token_loss, 0)
+    denom = loss_mask.sum().clamp(min=1.0)
+    return (safe * loss_mask).sum() / denom</code></pre>
+
+    <p><strong>为什么是 .float() 平方？</strong> bf16 平方的累积误差大。强制 fp32 算 loss。</p>
+
+    <p><strong>为什么 mask 上 condition token 和 padding？</strong> condition 是输入，不是目标；padding 是占位，不是真实 token。两者都不该贡献梯度。</p>
+
+    <p><strong>为什么 safe-where 而不是直接 .mean()？</strong> 直接 .mean() 会把 padded 位置的 0 也算进去，分母偏大，loss 被稀释。safe-where 保证<strong>只在有效位置上做平均</strong>。<code>clamp(min=1.0)</code> 防止全 padding 的样本除零产生 NaN。</p>
+
+    <div class="takeaway">
+      Pass ②（一次有梯度的训练 forward）是真正的"训练"。Pass ① ③ ④ 都是为了构造 Pass ② 的<strong>输入</strong>和<strong>目标</strong>而做的辅助计算，全部 detached 不占反向显存。
+    </div>
+  </div>
+
+  <!-- ============================================================
+       4.4 · Decoder 分支详解
+       ============================================================ -->
+  <div class="tutorial-step">
+    <div class="tutorial-step-num">4.4 <span class="lead">DECODER · 1 PASS</span></div>
+    <h3>Decoder 分支详解 · 1 次前向</h3>
+
+    <p>decoder 分支只有 1 次前向，简单得多：</p>
+
+<pre><code># 第 ① 步: per-token logit-normal 噪声
+p = torch.randn(B * L) * config.decoder_p_std + config.decoder_p_mean
+lambda_t = torch.sigmoid(p).view(B, L, 1)            # ← per-token!
+dec_noise = torch.randn_like(x0) * config.decoder_noise_scale  # noise scale 5.0
+decoder_z = lambda_t * x0 + (1.0 - lambda_t) * dec_noise
+
+# 第 ② 步: 单次前向 (decode mode), 输出 logits
+t_one = torch.ones(B, device=device, dtype=decoder_z.dtype)
+dec_in = torch.cat([decoder_z, torch.zeros_like(decoder_z)], dim=-1)
+with torch.autocast(...):
+    _, logits = model(dec_in, t_one, self_cond_cfg_scale=sc_cfg_scale,
+                      decoder_step_active=True)
+
+# 第 ③ 步: cross-entropy on tokens
+log_probs = F.log_softmax(logits.float(), dim=-1)
+nll = -log_probs.gather(-1, target_ids.unsqueeze(-1)).squeeze(-1)
+ce_loss = _mask_reduce_loss(nll, loss_mask)</code></pre>
+
+    <h4>每行的"为什么"</h4>
+
+    <p><strong>为什么 λ 是 per-token？</strong> 这是 decoder 分支跟 denoiser 分支最关键的区别。denoiser 给整个序列共用一个 t（"整个序列同时去噪到 t=0.3"）；decoder 给每个 token 独立采 λ（"这个 token 是 80% 清晰，那个是 30%"）。这模拟了真实推理时"有些位置已经收敛，有些还很噪"的情景，让 decoder 学到的是"<strong>从任意混合扰动中恢复正确 token</strong>"。</p>
+
+    <p><strong>为什么 decoder_noise_scale=5.0 比 denoiser_noise_scale=2.0 大？</strong> decoder 分支看到的 z̃ 在大部分位置都接近 x（因为 λ 偏向 1）。如果噪声方差太小，模型就过分依赖 x 这个"几乎是答案"的输入，学不到鲁棒的解码能力。放大噪声让 decoder 分支看到的"扰动"更剧烈，学到的解码也更强韧。</p>
+
+    <p><strong>为什么 self_cond 始终给零？</strong> Decoder 分支模拟的是采样的最后一步，那一步是<strong>已经迭代完所有 denoise 步</strong>之后的状态，没有"上一步预测"可用。给零是符合实际推理流程的。</p>
+
+    <p><strong>为什么 logits 用 .float() 算 log_softmax？</strong> bf16 的 log_softmax 在大 vocab（32K）上数值不稳，容易出 NaN。强制 fp32 之后稳定得多。</p>
+
+    <p><strong>为什么 t=1 而不是 t=0.99？</strong> Decoder 模式是个<strong>特殊状态</strong>，由前缀 mode_token 区分。t=1 是个语义占位（"我们在最后一步"），实际计算路径已经跟 denoiser 不同（unembed head 启用）。</p>
+
+    <div class="takeaway">
+      denoise 与 decode 共享主体权重（同一个 Transformer），仅在<strong>前缀 mode token</strong> 和<strong>输出头</strong> 上区分。这就是 ELF "no separate decoder" 主张的实现 —— 一个网络两种模式。
+    </div>
+  </div>
+
+  <!-- ============================================================
+       4.5 · 外层循环
+       ============================================================ -->
+  <div class="tutorial-step">
+    <div class="tutorial-step-num">4.5 <span class="lead">OUTER LOOP</span></div>
+    <h3>train.py 怎么把单步串成完整训练</h3>
+
+    <p>train_step 算完 loss 之后，外层 <code>train.py</code> 负责：(1) 反向 (2) DDP 同步 (3) optimizer step (4) EMA 更新。每个细节都有讲究：</p>
+
+    <h4>第 ① 步：window-level 分支决策</h4>
+
+<pre><code># 每个 grad_accum window 开头采一次, 不是每个 micro-batch
+if step_in_epoch % grad_accum == 0:
+    current_branch = broadcast_branch(config.decoder_prob, device, branch_gen)
+
+def broadcast_branch(decoder_prob, device, generator):
+    flip = torch.zeros(1, dtype=torch.uint8, device=device)
+    if (not dist.is_initialized()) or dist.get_rank() == 0:
+        flip.fill_(int(torch.rand((), generator=generator) < decoder_prob))
+    if dist.is_initialized():
+        dist.broadcast(flip, src=0)   # rank 0 决定, 同步到所有 rank
+    return bool(flip.item())</code></pre>
+
+    <p><strong>为什么 rank 0 决定再 broadcast？</strong> DDP 的<strong>所有 rank 必须走完全相同的计算图</strong>，否则某些参数在某 rank 不用、在另一 rank 用，all-reduce 会 hang。让 rank 0 抛硬币再广播，保证一致性。</p>
+
+    <p><strong>为什么 window 级别决策而不是 micro-batch 级别？</strong> 这是 advisor 上一轮帮我们抓的 bug。micro-batch 级别决策 + grad_accum > 1 时，如果 window 内既有 decode 又有 denoise，<code>dec_proj.grad</code> 在 window 末尾可能"已经累积了梯度，但当前 micro-batch 没用到它"，DDP 的 <code>find_unused_parameters=True</code> 会跳过它的 all-reduce，导致 rank 间漂移。Window 级别保证整窗参数使用集合一致。</p>
+
+    <h4>第 ② 步：no_sync 跳过中间 micro-batch 的 all-reduce</h4>
+
+<pre><code>is_last_micro = ((step_in_epoch + 1) % grad_accum == 0)
+ctx = model.no_sync() if (world_size > 1 and not is_last_micro) else nullctx()
+with ctx:
+    loss, metrics, _ = train_step(...)
+    (loss / grad_accum).backward()</code></pre>
+
+    <p><strong>为什么除以 grad_accum？</strong> backward 默认累加到 <code>.grad</code>。K 次累加每次除 K = 等效于一次大 batch 的平均。这是数学上让"梯度累积等价于大 batch"的关键。</p>
+
+    <p><strong>为什么 no_sync？</strong> DDP 默认每次 backward 都做 NCCL all-reduce，开销大。<code>model.no_sync()</code> 让中间 micro-batch 跳过 all-reduce，只在窗口最后一次 backward 触发同步。粗略可节省 (K-1)/K 的通信。</p>
+
+    <h4>第 ③ 步：optimizer + EMA + 跨 rank loss 同步</h4>
+
+<pre><code>if is_last_micro:
+    if config.grad_clip > 0:
+        clip_grad_norm_(model.parameters(), config.grad_clip)
+    optimizer.set_lr(lr_schedule(global_step // grad_accum))
+    optimizer.step()
+    optimizer.zero_grad(set_to_none=True)
+    ema.update(model.parameters())     # ⚠ 仅在 optimizer step 边界
+
+# 跨 rank 平均 loss 用于日志, 不影响优化
+if dist.is_initialized() and world_size > 1:
+    for k, v in metrics.items():
+        if isinstance(v, torch.Tensor):
+            dist.all_reduce(v, op=dist.ReduceOp.AVG)</code></pre>
+
+    <p><strong>为什么 EMA 必须在 optimizer step 边界？</strong> EMA 公式 <code>buf = decay * buf + (1-decay) * params</code>。如果每个 micro-batch 都更新 EMA（params 此时还没变），有效 decay 退化为 <code>decay^K</code>。K=4 时原本 0.9999 → 0.9996，差距巨大。</p>
+
+    <p><strong>为什么 all_reduce 是 AVG 而不是 SUM？</strong> 是给日志 / W&B 看的"全局 loss"，要的是均值。优化层面不需要这一步，DDP 已经把梯度做了 AVG。</p>
+
+    <h4>第 ④ 步：auto-resume（不在主循环里，但值得提）</h4>
+
+<pre><code># train.py 启动时
+if not config.resume:
+    auto = find_latest_checkpoint(config.output_dir)
+    if auto:
+        config.resume = config.output_dir
+if config.resume:
+    start_step, start_epoch = load_checkpoint(
+        config.resume, model, optimizer, ema, map_location=device,
+    )</code></pre>
+
+    <p>训练崩溃后直接重启同一条命令，会自动从 <code>outputs/.../checkpoint_XXXXX.pt</code> 恢复 params、EMA、optimizer state、step、epoch。不需要手动指定。</p>
+  </div>
+
+  <!-- ============================================================
+       4.6 · 关键设计选择回顾
+       ============================================================ -->
+  <div class="tutorial-step">
+    <div class="tutorial-step-num">4.6 <span class="lead">DESIGN RATIONALE</span></div>
+    <h3>设计选择回顾 · 这些写法都不是随便选的</h3>
+
+    <p>看完代码再总结，整个 train_step / train.py 的写法都在解决具体的"如果不这么写就会出问题"：</p>
+
+    <table>
+      <thead><tr><th>写法</th><th>不这么写的后果</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>预测 x 不是 v</strong></td>
+          <td>高维（≥768）下 v-prediction 训练不稳，论文 Sec C.1 数据</td>
+        </tr>
+        <tr>
+          <td><strong>denoiser_noise_scale=2.0</strong></td>
+          <td>噪声端方差太小, 模型容易"作弊"识别 t 而不学速度场</td>
+        </tr>
+        <tr>
+          <td><strong>logit-normal time schedule</strong></td>
+          <td>uniform 在少步采样下 Gen PPL 翻倍（Fig 15a）</td>
+        </tr>
+        <tr>
+          <td><strong>Pass ① ③ ④ no_grad</strong></td>
+          <td>带梯度 = 4 倍激活显存 = OOM</td>
+        </tr>
+        <tr>
+          <td><strong>v_target.detach()</strong></td>
+          <td>反向穿过 Pass ③ ④, 同上 OOM</td>
+        </tr>
+        <tr>
+          <td><strong>decoder 用 per-token λ</strong></td>
+          <td>per-sequence 学到的解码鲁棒性差</td>
+        </tr>
+        <tr>
+          <td><strong>decoder_noise_scale=5.0 (vs 2.0)</strong></td>
+          <td>解码分支输入太干净, 学不到从噪声恢复的能力</td>
+        </tr>
+        <tr>
+          <td><strong>共享 denoiser/decoder 权重</strong></td>
+          <td>论文 Fig 5b: 独立 decoder 在低 PPL 区域差一截</td>
+        </tr>
+        <tr>
+          <td><strong>fp32 grads + bf16 forward</strong></td>
+          <td>bf16 grads → DDP all-reduce 非 bit-identical → Muon NS 各 rank 偏离 → 参数漂移</td>
+        </tr>
+        <tr>
+          <td><strong>broadcast_branch 在 window 边界</strong></td>
+          <td>micro-batch 级别 → DDP <code>find_unused_parameters</code> + grad_accum 组合下漂移</td>
+        </tr>
+        <tr>
+          <td><strong>EMA 仅在 optimizer step 边界</strong></td>
+          <td>K 倍稀释, 0.9999 → 0.9996 (K=4)</td>
+        </tr>
+        <tr>
+          <td><strong>safe-where loss reduction</strong></td>
+          <td>padding 全为 0 时 .mean() = NaN</td>
+        </tr>
+        <tr>
+          <td><strong>loss / grad_accum 再 backward</strong></td>
+          <td>梯度累积 K 次 = 等效 batch 的 K 倍, 跟大 batch 不等价</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>每一行都对应一个"我们或者论文作者真的踩过"的坑。这种"防御性写法"是为什么相同算法在不同实现里效果可以差很多 —— 细节决定能不能跑通。</p>
+
+    <div class="callout">
+      <strong>实操建议</strong>：第一次跑训练时，开 <code>autocast_dtype: float32</code> + <code>grad_accum_steps: 1</code> + <code>activation_checkpointing: false</code>，把所有"性能优化"都关掉。先确认基础路径能收敛到合理 loss，再逐项打开优化看是否复现同样曲线。如果开了某项之后曲线偏离，那项就是嫌疑犯。
+    </div>
   </div>
 </section>
 

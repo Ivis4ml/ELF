@@ -1,0 +1,73 @@
+# Pure PyTorch ELF-L on 8xH200.
+
+data_path: embedded-language-flows/openwebtext-t5
+eval_data_path: null
+dataset_cache_dir: null
+max_length: 1024
+max_input_length: null
+pad_token: pad
+tokenizer_name: google-t5/t5-small
+encoder_model_name: google-t5/t5-small
+latent_mean: 0.0
+latent_std: 0.2
+
+model: ELF-L
+bottleneck_dim: 128
+num_time_tokens: 4
+num_self_cond_cfg_tokens: 4
+num_model_mode_tokens: 4
+attn_dropout: 0.0
+proj_dropout: 0.0
+gradient_checkpointing: true
+torch_compile: false
+
+denoiser_p_mean: -1.5
+denoiser_p_std: 0.8
+denoiser_noise_scale: 2.0
+t_eps: 0.05
+time_schedule: logit_normal
+
+decoder_prob: 0.2
+decoder_noise_scale: 5.0
+decoder_p_mean: 0.8
+decoder_p_std: 0.8
+
+label_drop_prob: 0.0
+self_cond_prob: 0.5
+self_cond_cfg_min: 0.5
+self_cond_cfg_max: 5.0
+
+epochs: 3
+global_batch_size: 512
+micro_batch_size: 4
+grad_accum_steps: 16
+blr: 0.001
+lr: null
+min_lr: 0.0
+lr_schedule: constant
+weight_decay: 0.0
+optimizer: muon
+adam_b1: 0.9
+adam_b2: 0.95
+max_grad_norm: 1.0
+warmup_epochs: 0.5
+warmup_steps: -1
+precision: bf16
+
+ema_decay: 0.9999
+ema_device: cuda
+log_freq: 100
+save_freq: 1
+output_dir: codex/outputs/elf_l-owt-8xh200
+resume: null
+use_wandb: false
+wandb_project: elf
+wandb_entity: null
+wandb_run_name: elf_l-owt-pytorch-8xh200
+
+seed: 42
+num_workers: 8
+pin_memory: true
+prefetch_factor: 4
+persistent_workers: true
+allow_tf32: true
